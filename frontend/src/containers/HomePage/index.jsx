@@ -23,8 +23,8 @@ const ContentContainer = styled.div`
   align-items: flex-start;
   padding: 1em 0;
 
-  @media screen and (max-width: ${deviceSize.mobile}px) {
-    padding: 5px;
+  @media screen and (max-width: ${deviceSize.tablet}px) {
+    //width: 90%;
   }
 `;
 

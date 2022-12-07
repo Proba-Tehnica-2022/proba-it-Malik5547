@@ -1,11 +1,13 @@
 import React from "react";
 import styled from "styled-components";
+
+import {deviceSize} from "../responsive";
 import {PageLogo} from "../pageLogo";
 
 import CloseBtnImg from "../../images/closeBtn.png"
 
 const Overlay = styled.div`
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.7);
   position: fixed;
   top: 0%;
   left: 0%;
@@ -25,6 +27,13 @@ const ModalContainer = styled.div`
   flex-direction: column;
   background: #FFFFFF;
   border-radius: 5px;
+
+  @media screen and (max-width: ${deviceSize.mobile}px) {
+    width: 100%;
+    border-radius: 0;
+    
+    //height: 100%;
+  }
 `
 
 const ModalTop = styled.div`
@@ -38,6 +47,14 @@ const ModalTop = styled.div`
   & img{
     max-height: 35px;
   }
+
+  @media screen and (max-width: ${deviceSize.mobile}px) {
+    padding: 2em 1.5em;
+
+    & img{
+      max-height: 30px;
+    }
+  }
 `
 
 const ModalContent = styled.div`
@@ -45,6 +62,10 @@ const ModalContent = styled.div`
   background: #6F3096;
   border-bottom-left-radius: 5px;
   border-bottom-right-radius: 5px;
+
+  @media screen and (max-width: ${deviceSize.mobile}px) {
+    border-radius: 0;
+  }
 `
 
 const CloseBtn = styled.img`

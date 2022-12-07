@@ -19,15 +19,17 @@ const FooterContainer = styled.div`
   background: #06114F;
   
   @media screen and (max-width: ${deviceSize.mobile}px) {
-    padding: 2em 12px;
+    padding: 1em 12px;
   }
 `;
 
 const TopContainer = styled.div`
-  //width: 100%;
   display: flex;
   align-content: center;
-  
+
+  @media screen and (max-width: ${deviceSize.mobile}px) {
+    margin-bottom: 0.8em;
+  }
 `;
 
 const ContentContainer = styled.div`
@@ -92,7 +94,7 @@ const PrivacyText = styled.h6`
   color: #FFFFFF;
 
   @media screen and (max-width: ${deviceSize.mobile}px) {
-    font-size: 8px;
+    font-size: 13px;
   }
 `;
 
@@ -111,7 +113,7 @@ const SocialIcon = styled.a`
   }
 
   @media screen and (max-width: ${deviceSize.mobile}px) {
-    font-size: 17px;
+    font-size: 22px;
   }
 `;
 

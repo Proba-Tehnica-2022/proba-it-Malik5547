@@ -1,5 +1,7 @@
 import React from "react";
 import styled from "styled-components";
+import { deviceSize } from "../../components/responsive";
+
 
 const ButtonWrapper = styled.button`
   
@@ -20,6 +22,14 @@ const ButtonWrapper = styled.button`
   cursor: pointer;
   transition: all 200ms ease-in-out;
 
+
+  @media screen and (max-width: ${deviceSize.mobile}px) {
+    font-size: 18px;
+    
+    ${({size}) => (size ? "width: " + size + ";" : null)};
+    ${({size}) => (size ? "height: " + size + ";" : null)};
+  }
+  
   &:hover {
   }
 

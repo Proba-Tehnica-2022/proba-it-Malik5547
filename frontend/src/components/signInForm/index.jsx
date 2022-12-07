@@ -1,6 +1,8 @@
 
 import React from "react";
 import styled from "styled-components";
+
+import {deviceSize} from "../responsive";
 import { Button} from "../button";
 
 
@@ -12,7 +14,11 @@ const FormContainer = styled.div`
   border-radius: 5%;
   background: #FFFFFF;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.5);
+
+  @media screen and (max-width: ${deviceSize.mobile}px) {
+    padding: 2em 1.5em;
     
+  }
 `
 
 const FormTitle = styled.h2`
@@ -22,6 +28,11 @@ const FormTitle = styled.h2`
   line-height: 40px;
 
   color: #6F3096;
+
+  @media screen and (max-width: ${deviceSize.mobile}px) {
+    margin-bottom: 1.5em;
+    font-size: 24px;
+  }
 `
 
 const InputLabel = styled.h4`
@@ -39,19 +50,26 @@ const InputLabel = styled.h4`
 
 const InputField = styled.input`
   width: 100%;
-  height: 2.5em;
+  height: 3em;
   margin-bottom: 1.5em;
   border: 1px solid #06114F;
   border-radius: 5px;
+  padding-left: 1em;
+  font-weight: 700;
+  
 
   ::placeholder{
-    padding: 1em 0.6em;
+    //padding: 1m 0.6em;
     font-style: normal;
     font-weight: 700;
     font-size: 16px;
     line-height: 20px;
 
     color: rgba(6, 17, 79, 0.3);
+  }
+
+  @media screen and (max-width: ${deviceSize.mobile}px) {
+    height: 3.4em;
   }
 `
 
@@ -72,6 +90,19 @@ const FormInputBtn = styled.button`
   background: #6F3096;
   border-radius: 5px;
   border: none;
+
+  @media screen and (max-width: ${deviceSize.mobile}px) {
+    width: 75%;
+    height: 3em;
+    margin-top: 1em;
+    margin-bottom: 1em;
+
+    font-family: 'Merriweather', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 20px;
+    text-align: center;
+  }
 `
 
 export function SignInForm (){

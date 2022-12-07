@@ -15,6 +15,10 @@ const SendMemeContainer = styled.div`
   background-color: #6F3096;
   align-items: center;
   justify-content: center;
+
+  @media screen and (max-width: ${deviceSize.mobile}px) {
+    height: auto;
+  }
 `;
 
 const ContentContainer = styled.div`
@@ -27,8 +31,16 @@ const ContentContainer = styled.div`
   background: #FFFFFF;
   box-shadow: 0px 10px 30px rgba(38, 50, 56, 0.5);
   border-radius: 21px;
+
+  @media screen and (max-width: ${deviceSize.mobile}px) {
+    max-width: 80%;
+  }
   
   @media screen and (max-width: ${deviceSize.mobile}px) {
+    //width: 100%;
+    margin: 2.3em 2em;
+    padding: 3em 1.5em;
+    height: auto;
     flex-direction: column-reverse;
   }
 `;
@@ -40,6 +52,7 @@ const FormContainer = styled.div`
   margin-right: 5em;
 
   @media screen and (max-width: ${deviceSize.mobile}px) {
+    flex-direction: column;
     align-items: center;
     margin: 0;
   }
@@ -53,7 +66,7 @@ const FormSloganContainer = styled.div`
 
   @media screen and (max-width: ${deviceSize.mobile}px) {
     align-items: center;
-    margin: 0;
+    margin: 0 1em;
   }
 `;
 
@@ -65,16 +78,27 @@ const FormSlogan = styled.h2`
   text-align: start;
   line-height: 121.1%;
   color: #252F65;
+
+  @media screen and (max-width: ${deviceSize.mobile}px) {
+    text-align: center;
+    font-size: 20px;
+  }
 `;
 
 const FormSloganDescription = styled.h4`
-  font-family:  'Roboto Thin', sans-serif;
+  font-family:  'Roboto', sans-serif;
   font-style: normal;
   font-weight: 300;
   font-size: 22px;
   text-align: start;
   line-height: 121.1%;
   color: #252F65;
+
+  @media screen and (max-width: ${deviceSize.mobile}px) {
+    text-align: center;
+    font-size: 16px;
+    padding: 0 0.5em;
+  }
 `;
 
 const FormInputContainer = styled.form`
@@ -98,6 +122,11 @@ const FormInputLabel = styled.label`
   font-size: 14px;
   line-height: 20px;
   color: #06114F;
+
+  @media screen and (max-width: ${deviceSize.mobile}px) {
+    align-self: start;
+    font-size: 16px;
+  }
 `;
 
 const FormInputField = styled.input`
@@ -115,11 +144,16 @@ const FormInputField = styled.input`
 
     color: rgba(6, 17, 79, 0.3);
   }
+
+  @media screen and (max-width: ${deviceSize.mobile}px) {
+    width: 100%;
+  }
 `;
 
 const FormInputBtn = styled.button`
   margin: 1em 4em;
   padding: 0.4em 0.6em;
+  font-family: 'Merriweather';
   font-style: normal;
   font-weight: 500;
   font-size: 14px;
@@ -132,6 +166,16 @@ const FormInputBtn = styled.button`
   background: #6F3096;
   border-radius: 5px;
   border: none;
+
+  @media screen and (max-width: ${deviceSize.mobile}px) {
+    margin-top: 1.5em;
+    margin-bottom: 0;
+    width: 60%;
+    height: 2.5em;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 20px;
+  }
 `
 
 export function SendMemeSection(){

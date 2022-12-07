@@ -19,8 +19,12 @@ const TopSectionContainer = styled.div`
   //background-position: 0px -150px;
   background-size: cover;
 
+  @media screen and (max-width: ${deviceSize.tablet}px) {
+    width: 90%;
+  }
+  
   @media screen and (max-width: ${deviceSize.mobile}px) {
-    height: 700px;
+    height: auto;
     background-position: 0px 0px;
   }
 `;
@@ -52,12 +56,19 @@ const TopSectionInnerContainer = styled.div`
 `;
 
 const StandoutImage = styled.div`
-  width: 44em;
-  height: 44em;
+  //width: 44em;
+  //height: 44em;
+  
+  
 
   img {
     width: 100%;
     height: 100%;
+  }
+
+  @media screen and (max-width: ${deviceSize.mobile}px) {
+    width: 110%;
+    height: auto;
   }
 `;
 
@@ -74,7 +85,8 @@ const LogoContainer = styled.div`
 `;
 
 const SloganText = styled.h3`
-  width: 36rem;
+  //width: 36rem;
+  max-width: 36rem;
   margin-bottom: 0;
   font-style: normal;
   font-weight: 900;
@@ -101,7 +113,7 @@ const SloganText = styled.h3`
 `;
 
 const SloganDescription = styled.h4`
-  width: 36rem;
+  max-width: 36rem;
   padding: 0 3rem;
   margin-bottom: 1rem;
   font-family: "Roboto", sans-serif;
@@ -117,11 +129,19 @@ const SloganDescription = styled.h4`
   @media screen and (max-width: ${deviceSize.mobile}px) {
     width: 100%;
     padding: 0;
+    margin-bottom: 2em;
     font-weight: 300;
     line-height: 21px;
     font-size: 18px;
   }
 `;
+
+const BtnWrapper = styled.a`
+  @media screen and (max-width: ${deviceSize.mobile}px) {
+    width: 100%;
+    height: 55px;
+  }
+`
 
 export function TopSection(props) {
     const { children } = props;
@@ -140,16 +160,16 @@ export function TopSection(props) {
                         <Marginer direction="vertical" margin={8} />
                         <SloganText>Partajarea de meme-uri nu a fost niciodată mai simplă!</SloganText>
                         <SloganDescription>Platforma ideală pentru studenții de la Politehnică, amuzați de câte materii o să pice semestrul asta.</SloganDescription>
-                        <Marginer direction="vertical" margin={15} />
-                        <a href={"#memeSection"}>
-                            <Button size={20}>Upload a MEME</Button>
-                        </a>
+                        <Marginer direction="vertical" margin={20} />
+                        <BtnWrapper href={"#memeSection"}>
+                            <Button size={"100%"}>Upload a MEME</Button>
+                        </BtnWrapper>
                     </LogoContainer>
-                    {!isMobile && (
+                    {/*{!isMobile && (*/}
                         <StandoutImage>
                             <img src={WhySoSaltyImg} alt="best in the field" />
                         </StandoutImage>
-                    )}
+                    {/*)}*/}
                 </TopSectionInnerContainer>
             </BackgroundFilter>
         </TopSectionContainer>

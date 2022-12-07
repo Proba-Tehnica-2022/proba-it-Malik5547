@@ -32,11 +32,12 @@ const NavbarContainer = styled.div`
 
 const AccessibilityContainer = styled.div`
   height: 100%;
-  position: fixed;
+  //position: fixed;
   display: flex;
   align-items: center;
 
   @media screen and (max-width: ${deviceSize.mobile}px) {
+    position: fixed;
     flex-direction: column;
     align-content: center;
     position: fixed;

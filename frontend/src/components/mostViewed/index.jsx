@@ -23,7 +23,7 @@ const ContentContainer = styled.div`
   justify-content: center;
   
   @media screen and (max-width: ${deviceSize.mobile}px) {
-    flex-direction: column-reverse;
+    //flex-direction: column-reverse?;
   }
 `;
 
@@ -37,13 +37,22 @@ const Title = styled.h2`
   width: 100%;
 
   color: #252F65;
+
+  @media screen and (max-width: ${deviceSize.mobile}px) {
+    padding-left: 0;
+    text-align: center;
+  }
 `
 
 const MemeListContainer = styled.div`
   display: flex;
   flex-direction: row;
   gap: 3em;
-  
+
+  @media screen and (max-width: ${deviceSize.mobile}px) {
+    flex-direction: column;
+    gap: 0;
+  }
 `
 
 const MemeContainer = styled.div`
