@@ -9,6 +9,8 @@ const db = require('./models');
 const { User, Meme } = require("./models");
 const {where} = require("sequelize");
 
+
+//<editor-fold desc="Meme API">
 db.sequelize.sync().then((req) => {
     app.listen( PORT, () => {
         console.log(`it's alive on http://localhost:${PORT}`);
@@ -84,3 +86,24 @@ app.delete('/memes/:id', (req, res) => {
         memeDeleted: 'true'
     })
 })
+
+//</editor-fold>
+
+app.post('/register', (req, res) => {
+    const { email, username, password } = req.body
+
+    User.create({
+        email: `${email}`,
+        username: `${username}`,
+
+    }).catch(err => {
+        if (err){
+            console.log(err);
+            memeCreated = false;
+        }
+    })
+
+    res.status(200).send({
+        memeCreated: `${memeCreated}`
+    })
+});
