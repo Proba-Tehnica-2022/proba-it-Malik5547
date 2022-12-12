@@ -60,18 +60,25 @@ app.post('/memes', (req, res) => {
     const { description } = req.body
     let memeCreated = true;
 
-    Meme.create({
-        description: `${description}`
-    }).catch(err => {
-        if (err){
-            console.log(err);
-            memeCreated = false;
-        }
-    })
+    if (description.length > 2500){
+        res.status(400).send({
+            description: "the field must be maximum 2500 characters"
+        })
+    } else {
 
-    res.status(200).send({
-        memeCreated: `${memeCreated}`
-    })
+        Meme.create({
+            description: `${description}`
+        }).catch(err => {
+            if (err) {
+                console.log(err);
+                memeCreated = false;
+            }
+        })
+
+        res.status(200).send({
+            memeCreated: `${memeCreated}`
+        })
+    }
 });
 
 app.patch('/memes/:id', (req, res) => {
@@ -105,6 +112,7 @@ app.delete('/memes/:id', (req, res) => {
 
 //</editor-fold>
 
+//<editor-fold desc="User API">
 app.post('/register', (req, res) => {
     const { email, username, password } = req.body
 
@@ -213,3 +221,4 @@ app.post('/login', (req, res) => {
         res.status(400).send(missingFields);
     }
 });
+//</editor-fold>
