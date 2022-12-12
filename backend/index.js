@@ -1,9 +1,18 @@
 const express = require('express');
+const bcrypt = require("bcrypt");
+const session = require("express-session");
+
 const app = express();
 const PORT = 8080;
-app.use(express.json());
 
-const bcrypt = require("bcrypt")
+app.use(express.json());
+app.use(session({
+    secret: "secret",
+    cookie: {
+        sameSite: 'strict',
+        maxAge: 60 * 1000 // 1 minute
+    }
+}));
 const saltRounds = 10
 
 const db = require('./models');
@@ -156,24 +165,24 @@ app.post('/login', (req, res) => {
 
     if (Object.keys(missingFields).length === 0) {
 
-        const user = User.findOne(where: {username: `${username}`});
-
-        if (user == null){
-            res.status(400).send({message: "Wrong username or password"});
-        } else {
-
-            bcrypt
-                .compare(password, user.password)
-                .then(correct => {
-                    if (correct) {
-
-                    } else {
-
-                    }
-                })
-                .catch(err => console.error(err.message))
-        }
-
+        User.findOne({where: {username: `${username}`}}).then((user) => {
+            if (user === null){
+                res.status(400).send({message: "Wrong username or password"});
+            } else {
+                bcrypt
+                    .compare(password, user.password)
+                    .then((correct) => {
+                        if (correct) {
+                            req.session.user = user;
+                            req.session.authorized = true;
+                            res.status(200).send({cookie: `${req.session.id}`});
+                        } else {
+                            res.status(400).send({message: "Invalid username or password"})
+                        }
+                    })
+                    .catch(err => console.error(err.message))
+            }
+        })
     } else{
         res.status(400).send(missingFields);
     }

@@ -27,6 +27,10 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
             validate: {
                 notEmpty: true
+            },
+            get() {
+                const rawValue = this.getDataValue('password');
+                return rawValue;
             }
         }
     });
