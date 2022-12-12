@@ -10,6 +10,7 @@ app.use(session({
     secret: "secret",
     cookie: {
         sameSite: 'strict',
+        secure: true,
         maxAge: 60 * 1000 // 1 minute
     }
 }));
@@ -19,6 +20,10 @@ const db = require('./models');
 
 const { User, Meme } = require("./models");
 const {where} = require("sequelize");
+
+const emailRegexp = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@stud\.acs\.upb\.ro$/;
+const passwordRegexp = /^.{8,32}$/;
+const usernameRegexp = /^.{8,32}$/;
 
 
 //<editor-fold desc="Meme API">
@@ -120,32 +125,51 @@ app.post('/register', (req, res) => {
         let userCreated = true;
         let hashedPassword;
 
-        // Password hashing
-        bcrypt
-            .hash(password, saltRounds)
-            .then(hash => {
-                console.log('Hash ', hash);
-                hashedPassword = hash;
+        // Validation
 
-                User.create({
-                    email: `${email}`,
-                    username: `${username}`,
-                    password: `${hash}`
-                }).then((createdUser) => {
-                    res.status(200).send({
-                        id: `${createdUser.id}`,
-                        email: `${createdUser.email}`,
-                        username: `${createdUser.username}`,
-                        password: `${password}`
+        let validationErrors = {};
+
+        if (!emailRegexp.test(email)){
+            validationErrors.email = ["the field must be a valid email ", "the field must end in @stud.acs.upb.ro"];
+        }
+        if (!usernameRegexp.test(username)){
+            validationErrors.username = ["the field is not between 8 and 32 characters"];
+        }
+        if (!passwordRegexp.test(password)){
+            validationErrors.password = ["the field is not between 8 and 32 characters"];
+        }
+
+        if (Object.keys(validationErrors).length === 0) {
+
+            // Password hashing
+            bcrypt
+                .hash(password, saltRounds)
+                .then(hash => {
+                    console.log('Hash ', hash);
+                    hashedPassword = hash;
+
+                    User.create({
+                        email: `${email}`,
+                        username: `${username}`,
+                        password: `${hash}`
+                    }).then((createdUser) => {
+                        res.status(200).send({
+                            id: `${createdUser.id}`,
+                            email: `${createdUser.email}`,
+                            username: `${createdUser.username}`,
+                            password: `${password}`
+                        })
+                    }).catch(err => {
+                        if (err) {
+                            console.log(err);
+                            userCreated = false;
+                        }
                     })
-                }).catch(err => {
-                    if (err) {
-                        console.log(err);
-                        userCreated = false;
-                    }
                 })
-            })
-            .catch(err => console.error(err.message))
+                .catch(err => console.error(err.message));
+        } else{
+            res.status(400).send(validationErrors);
+        }
     } else{
         res.status(400).send(missingFields);
     }
@@ -175,6 +199,8 @@ app.post('/login', (req, res) => {
                         if (correct) {
                             req.session.user = user;
                             req.session.authorized = true;
+
+                            // console.log("Cookie: ", typeof(req.session.cookie));
                             res.status(200).send({cookie: `${req.session.id}`});
                         } else {
                             res.status(400).send({message: "Invalid username or password"})
