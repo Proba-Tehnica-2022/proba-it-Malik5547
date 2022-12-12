@@ -3,6 +3,8 @@ const app = express();
 const PORT = 8080;
 app.use(express.json());
 
+const bcrypt = require("bcrypt")
+const saltRounds = 10
 
 const db = require('./models');
 
@@ -92,18 +94,87 @@ app.delete('/memes/:id', (req, res) => {
 app.post('/register', (req, res) => {
     const { email, username, password } = req.body
 
-    User.create({
-        email: `${email}`,
-        username: `${username}`,
+    let missingFields = {};
 
-    }).catch(err => {
-        if (err){
-            console.log(err);
-            memeCreated = false;
+    if (email == null){
+        missingFields.email = "is missing";
+    }
+    if (username == null){
+        missingFields.username = "is missing";
+    }
+    if (password == null){
+        missingFields.password = "is missing";
+    }
+
+    if (Object.keys(missingFields).length === 0) {
+
+        let userCreated = true;
+        let hashedPassword;
+
+        // Password hashing
+        bcrypt
+            .hash(password, saltRounds)
+            .then(hash => {
+                console.log('Hash ', hash);
+                hashedPassword = hash;
+
+                User.create({
+                    email: `${email}`,
+                    username: `${username}`,
+                    password: `${hash}`
+                }).then((createdUser) => {
+                    res.status(200).send({
+                        id: `${createdUser.id}`,
+                        email: `${createdUser.email}`,
+                        username: `${createdUser.username}`,
+                        password: `${password}`
+                    })
+                }).catch(err => {
+                    if (err) {
+                        console.log(err);
+                        userCreated = false;
+                    }
+                })
+            })
+            .catch(err => console.error(err.message))
+    } else{
+        res.status(400).send(missingFields);
+    }
+});
+
+app.post('/login', (req, res) => {
+    const {username, password} = req.body;
+
+    let missingFields = {};
+
+    if (username == null){
+        missingFields.username = "is required";
+    }
+    if (password == null){
+        missingFields.password = "is required";
+    }
+
+    if (Object.keys(missingFields).length === 0) {
+
+        const user = User.findOne(where: {username: `${username}`});
+
+        if (user == null){
+            res.status(400).send({message: "Wrong username or password"});
+        } else {
+
+            bcrypt
+                .compare(password, user.password)
+                .then(correct => {
+                    if (correct) {
+
+                    } else {
+
+                    }
+                })
+                .catch(err => console.error(err.message))
         }
-    })
 
-    res.status(200).send({
-        memeCreated: `${memeCreated}`
-    })
+    } else{
+        res.status(400).send(missingFields);
+    }
 });
