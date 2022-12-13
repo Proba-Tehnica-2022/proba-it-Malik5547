@@ -12,6 +12,10 @@ module.exports = (sequelize, DataTypes) => {
             validate: {
                 notEmpty: true
             }
+        },
+        filename: {
+            type: DataTypes.STRING(100),
+            allowNull: true,
         }
     });
 
