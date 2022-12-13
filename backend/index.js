@@ -1,19 +1,25 @@
 const express = require('express');
 const bcrypt = require("bcrypt");
-const session = require("express-session");
+// const session = require("express-session");
+const jwt = require("jsonwebtoken");
+require("dotenv").config();
 
 const app = express();
 const PORT = 8080;
 
+const SECRET_KEY = "secret"
+
 app.use(express.json());
-app.use(session({
-    secret: "secret",
-    cookie: {
-        sameSite: 'strict',
-        secure: true,
-        maxAge: 60 * 1000 // 1 minute
-    }
-}));
+// app.use(session({
+//     secret: "secret",
+//     resave: false,
+//     saveUninitialized: false,
+//     cookie: {
+//         sameSite: 'strict',
+//         secure: true,
+//         maxAge: 60 * 60 * 1000 // 5 minutes
+//     }
+// }));
 const saltRounds = 10
 
 const db = require('./models');
@@ -26,13 +32,14 @@ const passwordRegexp = /^.{8,32}$/;
 const usernameRegexp = /^.{8,32}$/;
 
 
-//<editor-fold desc="Meme API">
 db.sequelize.sync().then((req) => {
     app.listen( PORT, () => {
         console.log(`it's alive on http://localhost:${PORT}`);
     });
 });
 
+
+//<editor-fold desc="Meme API">
 app.get('/memes', (req, res) => {
     Meme.findAll().then((memes) => {
         res.status(200).send(memes);
@@ -56,27 +63,37 @@ app.get('/memes/:id', (req, res) => {
     })
 });
 
-app.post('/memes', (req, res) => {
-    const { description } = req.body
-    let memeCreated = true;
+app.post('/memes', authenticateToken, (req, res) => {
+    // Check authentication
 
-    if (description.length > 2500){
-        res.status(400).send({
-            description: "the field must be maximum 2500 characters"
-        })
-    } else {
+    // console.log("Current user: ", req.session);
+    //
+    if (req.user) {
+        const {description} = req.body
+        let memeCreated = true;
 
-        Meme.create({
-            description: `${description}`
-        }).catch(err => {
-            if (err) {
-                console.log(err);
-                memeCreated = false;
-            }
-        })
+        if (description.length > 2500) {
+            res.status(400).send({
+                description: "the field must be maximum 2500 characters"
+            })
+        } else {
 
-        res.status(200).send({
-            memeCreated: `${memeCreated}`
+            Meme.create({
+                description: `${description}`
+            }).catch(err => {
+                if (err) {
+                    console.log(err);
+                    memeCreated = false;
+                }
+            })
+
+            res.status(200).send({
+                memeCreated: `${memeCreated}`
+            })
+        }
+    } else{
+        res.status(401).send({
+            message: "The user should be logged in to create a meme"
         })
     }
 });
@@ -188,10 +205,10 @@ app.post('/login', (req, res) => {
 
     let missingFields = {};
 
-    if (username == null){
+    if (username === null){
         missingFields.username = "is required";
     }
-    if (password == null){
+    if (password === null){
         missingFields.password = "is required";
     }
 
@@ -205,11 +222,14 @@ app.post('/login', (req, res) => {
                     .compare(password, user.password)
                     .then((correct) => {
                         if (correct) {
-                            req.session.user = user;
-                            req.session.authorized = true;
+                            // req.session.user = user;
+                            // req.session.authorized = true;
 
-                            // console.log("Cookie: ", typeof(req.session.cookie));
-                            res.status(200).send({cookie: `${req.session.id}`});
+                            const user = {username: `${username}` };
+
+                            jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {algorithm: 'HS256', expiresIn: "10h"}, (err, token) => {
+                                res.status(200).json({token: `${token}`});
+                            });
                         } else {
                             res.status(400).send({message: "Invalid username or password"})
                         }
@@ -221,4 +241,17 @@ app.post('/login', (req, res) => {
         res.status(400).send(missingFields);
     }
 });
+
+function authenticateToken(req, res, next){
+    const authHeader = req.headers['authorization']
+    const token = authHeader && authHeader.split(' ')[1]
+    if (token == null) return res.send(401);
+
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, {algorithm: 'HS256'}, (err, user) => {
+        if(err) return res.send(403)
+        req.user = user
+        next()
+    })
+
+}
 //</editor-fold>
