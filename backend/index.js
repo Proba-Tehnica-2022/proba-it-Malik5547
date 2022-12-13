@@ -67,8 +67,6 @@ app.get('/memes/:id', (req, res) => {
 });
 
 app.post('/memes', authenticateToken, (req, res) => {
-    // Check authentication
-
     if (req.user) {
         const {description} = req.body
         let memeCreated = true;
@@ -102,7 +100,40 @@ app.post('/memes', authenticateToken, (req, res) => {
     }
 });
 
-app.patch('/memes/:id', (req, res) => {
+app.patch('/memes/:id', authenticateToken, (req, res) => {
+    if (req.user) {
+        const { id } = req.params;
+        const {description} = req.body
+
+        if (description.length > 2500) {
+            res.status(400).send({
+                description: "the field must be maximum 2500 characters"
+            })
+        } else {
+            User.findOne({ where: { username: `${req.user.username}`}}).then((currentUser) => {
+                Meme.findOne({ where: {id: `${id}`}}).then((meme) => {
+                    if (meme == null){
+                        res.status(404).send({error: `Meme with ID: ${id} doesn't exists.`});
+                        console.log(`Meme with ID: ${id} doesn't exists.`);
+                    } else{
+                        if (meme.UserId == currentUser.id){
+                            meme.description = `${description}`;
+                            meme.save();
+
+                            res.status(200).send(meme);
+                        } else{
+                            res.status(403).send({err: `The meme with id ${id} doesn't belong to this user`});
+                        }
+                    }
+                }).catch((err) => {
+                    console.log(err);
+                })
+            }).catch((err) => {
+                console.log(err);
+            })
+        }
+    }
+
     const { id } = req.params;
     const { description } = req.body;
 
