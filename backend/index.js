@@ -122,7 +122,7 @@ app.patch('/memes/:id', authenticateToken, (req, res) => {
 
                             res.status(200).send(meme);
                         } else{
-                            res.status(403).send({err: `The meme with id ${id} doesn't belong to this user`});
+                            res.status(403).send({message: "You can modify only your memes"});
                         }
                     }
                 }).catch((err) => {
@@ -133,23 +133,6 @@ app.patch('/memes/:id', authenticateToken, (req, res) => {
             })
         }
     }
-
-    const { id } = req.params;
-    const { description } = req.body;
-
-    Meme.findOne({ where: {id: `${id}`}}).then((meme) => {
-        if (meme == null){
-            res.status(404).send({error: `Meme with ID: ${id} doesn't exists.`});
-            console.log(`Meme with ID: ${id} doesn't exists.`);
-        } else{
-            meme.description = `${description}`;
-            meme.save();
-
-            res.status(200).send(meme);
-        }
-    }).catch((err) => {
-        console.log(err);
-    })
 })
 
 app.delete('/memes/:id', (req, res) => {
@@ -257,9 +240,6 @@ app.post('/login', (req, res) => {
                     .compare(password, user.password)
                     .then((correct) => {
                         if (correct) {
-                            // req.session.user = user;
-                            // req.session.authorized = true;
-
                             const user = {username: `${username}` };
 
                             jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {algorithm: 'HS256', expiresIn: "10h"}, (err, token) => {
