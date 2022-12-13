@@ -27,12 +27,15 @@ const db = require('./models');
 const { User, Meme } = require("./models");
 const {where} = require("sequelize");
 
+User.hasMany(Meme)
+Meme.belongsTo(User)
+
 const emailRegexp = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@stud\.acs\.upb\.ro$/;
 const passwordRegexp = /^.{8,32}$/;
 const usernameRegexp = /^.{8,32}$/;
 
-
-db.sequelize.sync().then((req) => {
+// TODO: Remove alter option
+db.sequelize.sync({ alter: true}).then((req) => {
     app.listen( PORT, () => {
         console.log(`it's alive on http://localhost:${PORT}`);
     });
@@ -66,8 +69,6 @@ app.get('/memes/:id', (req, res) => {
 app.post('/memes', authenticateToken, (req, res) => {
     // Check authentication
 
-    // console.log("Current user: ", req.session);
-    //
     if (req.user) {
         const {description} = req.body
         let memeCreated = true;
@@ -77,18 +78,21 @@ app.post('/memes', authenticateToken, (req, res) => {
                 description: "the field must be maximum 2500 characters"
             })
         } else {
+            User.findOne({ where: { username: `${req.user.username}`}}).then((currentUser) => {
+                Meme.create({
+                    description: `${description}`,
+                    UserId: `${currentUser.id}`
+                }).catch(err => {
+                    if (err) {
+                        console.log(err);
+                        memeCreated = false;
+                    }
+                })
 
-            Meme.create({
-                description: `${description}`
-            }).catch(err => {
-                if (err) {
-                    console.log(err);
-                    memeCreated = false;
-                }
-            })
+                res.status(200).send({
+                    memeCreated: `${memeCreated}`
+                })
 
-            res.status(200).send({
-                memeCreated: `${memeCreated}`
             })
         }
     } else{
