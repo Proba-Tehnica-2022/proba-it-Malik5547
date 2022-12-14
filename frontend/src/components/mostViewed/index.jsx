@@ -4,6 +4,7 @@ import {deviceSize} from "../responsive";
 import FirstMeme from "../../images/meme_1.png"
 import SecondMeme from "../../images/meme_2.png"
 import ThirdMeme from "../../images/meme_3.png"
+import BestMeme from "../../images/my_project.png"
 
 const MostViewedContainer = styled.div`
   width: 100%;
@@ -57,6 +58,7 @@ const MemeListContainer = styled.div`
 
 const MemeContainer = styled.div`
   //display: block;
+  width: 100%;
   padding: 1em 0;
   justify-content: flex-start;
 `
@@ -74,7 +76,7 @@ export function MostViewedSection(){
 
                 <MemeListContainer>
                     <MemeContainer>
-                        <MemeImg src={FirstMeme} alt={"First Meme"}/>
+                        <MemeImg src={BestMeme} alt={"First Meme"}/>
                     </MemeContainer>
                     <MemeContainer>
                         <MemeImg src={SecondMeme} alt={"Second Meme"}/>
