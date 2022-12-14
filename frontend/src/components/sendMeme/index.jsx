@@ -134,11 +134,11 @@ const FormInputField = styled.input`
   height: 2.5em;
   border: 1px solid #06114F;
   border-radius: 5px;
+  padding: 1em 0.6em;
+  font-weight: 700;
   
   ::placeholder{
-    padding: 1em 0.6em;
     font-style: normal;
-    font-weight: 700;
     font-size: 16px;
     line-height: 20px;
 

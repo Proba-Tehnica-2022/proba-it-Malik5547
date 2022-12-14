@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 
 // import { ImageConfig } from '../../config/imageConfig';
 // import uploadImg from '../../assets/cloud-upload-regular-240.png';
+import CloseBtnImg from "../../images/closeBtn.png"
 import styled from "styled-components";
 
 const DropFileContainer = styled.div`
@@ -37,25 +38,27 @@ const FileInput = styled.input`
   left: 0;
   width: 100%;
   height: 100%;
-  cursor: pointer;
+  pointer-events: ${props => props.fileUploaded ? "none" : "auto"};
+  cursor: ${props => props.fileUploaded ? "default" : "pointer"};
 
   ::file-selector-button {
     display: none;
   }
-  
-  //&:hover, dragover {
-  //  opacity: 0.6;
-  //}
 `
 
 const DropFilePreview = styled.div`
-  margin-top: 30%;
+  //margin-top: 30%;
+  height: 100%;
+  padding: 1em 1em;
 
 `
 
 const DropFilePreviewTitle = styled.p`
-  font-weight:  500;
-  margin-bottom: 20px;
+  margin-top: 0.5em;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 14px;
+  color: #06114F;
 `
 
 const DropFilePreviewItem = styled.div`
@@ -71,9 +74,9 @@ const DropFilePreviewItem = styled.div`
   }
 `
 
-const DopFilePreviewImg = styled.img`
-  width: 50px;
-  margin-right: 20px;
+const DropFilePreviewImg = styled.img`
+  height: 80%;
+  //margin-right: 20px;
 `
 
 const DropFilePreviewInfo = styled.div`
@@ -82,22 +85,26 @@ const DropFilePreviewInfo = styled.div`
   justify-content: space-between;
 `
 
-const DropFilePreviewDel = styled.span`
-  background-color: var(--box-bg);
-  width: 40px;
-  height: 40px;
+const DropFilePreviewDel = styled.img`
+  margin-left: 1em;
+
+  //width: 1.5em;
+  height: 1em;
+  display: inline-block;
+  //text-align: center;
+  //line-height: 1em;
+  //display: block;
+
   border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  box-shadow: var(--box-shadow);
-  cursor: pointer;
-  opacity: 0;
-  transition: opacity 0.3s ease;
+
+  &:hover{
+    cursor: pointer;
+  }
+  
+  & img{
+    height: 100%;
+  }
+  
 `
 
 const DropFileInput = (props) => {
@@ -105,6 +112,7 @@ const DropFileInput = (props) => {
     const wrapperRef = useRef(null);
 
     const [file, setFile] = useState(null);
+    const [fileUrl, setFileUrl] = useState();
 
     const onDragEnter = () => wrapperRef.current.classList.add('dragover');
 
@@ -118,6 +126,8 @@ const DropFileInput = (props) => {
             // const updatedList = [...fileList, newFile];
             // setFileList(updatedList);
             setFile((newFile));
+            // setFile(URL.createObjectURL(newFile));
+            setFileUrl(URL.createObjectURL(e.target.files[0]));
             props.onFileChange(newFile);
         }
     }
@@ -139,32 +149,41 @@ const DropFileInput = (props) => {
                 onDragLeave={onDragLeave}
                 onDrop={onDrop}
             >
-                <DropFileLabel>
-                    {/*<img src={uploadImg} alt="" />*/}
-                    <p>drag & drop image or click to upload</p>
-                </DropFileLabel>
-                <FileInput accept={".png,.jpg,.jpeg,.gif"} type="file" value="" onChange={onFileDrop}/>
-            </DropFileContainer>
-            {
+                { file == null ? (
+                    <DropFileLabel>
+                        <p>drag & drop image or click to upload</p>
+                    </DropFileLabel>
+                ) : null }
+
+                <FileInput disabled={file != null ? true : false} fileUploaded={file != null ? true : false} accept={".png,.jpg,.jpeg,.gif"} type="file" value="" onChange={onFileDrop}/>
+
+                {
                 file != null ? (
                     <DropFilePreview>
+                        <DropFilePreviewImg src={fileUrl} alt={"Test"}/>
+
                         <DropFilePreviewTitle>
-                            Ready to upload
+                            {file.name}
+                            <DropFilePreviewDel src={CloseBtnImg} onClick={() => fileRemove(file)}></DropFilePreviewDel>
+
+
                         </DropFilePreviewTitle>
+                        {/*<DropFilePreviewDel src={CloseBtnImg} onClick={() => fileRemove(file)}></DropFilePreviewDel>*/}
                         {
                                 <DropFilePreviewItem  >
                                     {/*<DopFilePreviewImg src={ImageConfig[item.type.split('/')[1]] || ImageConfig['default']} alt="" />*/}
-                                    <DropFilePreviewInfo>
-                                        <p>{file.name}</p>
-                                        <p>{file.size}B</p>
-                                    </DropFilePreviewInfo>
-                                    <DropFilePreviewDel onClick={() => fileRemove(file)}>x</DropFilePreviewDel>
+                                    {/*<DropFilePreviewInfo>*/}
+                                    {/*    <p>{file.name}</p>*/}
+                                    {/*    <p>{file.size}B</p>*/}
+                                    {/*</DropFilePreviewInfo>*/}
+                                    {/*<DropFilePreviewDel onClick={() => fileRemove(file)}>x</DropFilePreviewDel>*/}
                                 </DropFilePreviewItem>
 
                         }
                     </DropFilePreview>
                 ) : null
-            }
+                }
+            </DropFileContainer>
         </>
     );
 }
